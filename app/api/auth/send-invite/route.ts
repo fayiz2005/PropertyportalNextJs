@@ -1,27 +1,38 @@
 import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
+import { sensitiveActionLimiter } from "@/lib/rateLimiter";
 
-// Generate a secure random token
 function generateToken(): string {
   return randomBytes(32).toString("hex");
 }
 
-// Ensure the token is unique in the database
-async function generateUniqueToken(): Promise<string> {
-  let token;
-  let exists = true;
-
-  while (exists) {
-    token = generateToken();
+async function generateUniqueToken(maxRetries = 5): Promise<string> {
+  for (let i = 0; i < maxRetries; i++) {
+    const token = generateToken();
     const existing = await prisma.invitation.findUnique({ where: { token } });
-    if (!existing) exists = false;
+    if (!existing) {
+      return token;
+    }
   }
-
-  return token;
+  throw new Error("Could not generate unique token after max retries");
 }
 
+
 export async function POST(req: Request) {
+  // Get IP address (works behind proxies like Vercel)
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+
+  // Consume a point for this IP, reject if limit exceeded
+  try {
+    await sensitiveActionLimiter.consume(ip);
+  } catch {
+    return new Response(
+      JSON.stringify({ message: "Too many invite requests. Please try again later." }),
+      { status: 429 }
+    );
+  }
+
   try {
     const { email } = await req.json();
 
@@ -30,9 +41,9 @@ export async function POST(req: Request) {
     }
 
     const token = await generateUniqueToken();
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour from now
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour expiry
 
-    // Upsert the invitation record (replaces old token if re-invited)
+    // Upsert invite token in DB
     await prisma.invitation.upsert({
       where: { email },
       update: { token, used: false, expiresAt },
@@ -41,7 +52,7 @@ export async function POST(req: Request) {
 
     const link = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/set-password?token=${token}`;
 
-    // Send the email
+    // Setup mail transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -50,6 +61,7 @@ export async function POST(req: Request) {
       },
     });
 
+    // Send invitation email
     await transporter.sendMail({
       from: `"Admin Panel" <${process.env.EMAIL_FROM}>`,
       to: email,
@@ -63,7 +75,6 @@ export async function POST(req: Request) {
     });
 
     return new Response(JSON.stringify({ message: "Invite sent!" }), { status: 200 });
-
   } catch (error) {
     console.error("Send invite error:", error);
     return new Response(JSON.stringify({ message: "Failed to send invite." }), { status: 500 });

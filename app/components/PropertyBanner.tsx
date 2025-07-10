@@ -14,18 +14,18 @@ const PropertyBanner = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % images.length);
-    }, 4000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden max-h-[350px]">
+    <div className="relative w-full overflow-hidden max-h-[350px] h-[350px]">
       {images.map((img, index) => (
         <img
           key={index}
           src={img}
           alt={`Slide ${index + 1}`}
-          className={`w-full h-[350px] object-cover absolute top-0 left-0 transition-opacity duration-1000 ${
+          className={`absolute w-full h-full object-cover top-0 left-0 transition-opacity duration-1000 ease-in-out ${
             index === activeIndex ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         />
@@ -33,13 +33,15 @@ const PropertyBanner = () => {
 
       {/* Controls */}
       <button
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded"
-        onClick={() => setActiveIndex((prev) => (prev - 1 + images.length) % images.length)}
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded z-20"
+        onClick={() =>
+          setActiveIndex((prev) => (prev - 1 + images.length) % images.length)
+        }
       >
         ‹
       </button>
       <button
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded"
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded z-20"
         onClick={() => setActiveIndex((prev) => (prev + 1) % images.length)}
       >
         ›

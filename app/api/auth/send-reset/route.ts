@@ -2,8 +2,23 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
+import { sensitiveActionLimiter } from "@/lib/rateLimiter";
 
 export async function POST(req: Request) {
+
+    // Get IP address (works behind proxies like Vercel)
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+
+  // Consume a point for this IP, reject if limit exceeded
+  try {
+    await sensitiveActionLimiter.consume(ip);
+  } catch {
+    return new Response(
+      JSON.stringify({ message: "Too many requests. Please try again later." }),
+      { status: 429 }
+    );
+  }
+
   const { email } = await req.json();
   console.log("[send-reset] Request received for email:", email);
 

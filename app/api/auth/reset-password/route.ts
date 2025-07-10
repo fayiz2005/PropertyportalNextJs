@@ -1,14 +1,34 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { sensitiveActionLimiter } from "@/lib/rateLimiter";
+import { passwordSchema } from "@/lib/passwordSchema";
 
 export async function POST(req: Request) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+
+  try {
+    await sensitiveActionLimiter.consume(ip);
+  } catch {
+    return NextResponse.json(
+      { error: "Too many reset attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const { token, password } = await req.json();
   console.log("[reset-password] Request received. Token:", token);
 
   if (!token || !password) {
     console.log("[reset-password] Missing token or password");
     return NextResponse.json({ error: "Missing token or password" }, { status: 400 });
+  }
+
+
+  const parsed = passwordSchema.safeParse(password);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message || "Invalid password format";
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
 
   const resetRecord = await prisma.passwordResetToken.findUnique({ where: { token } });

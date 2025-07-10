@@ -85,3 +85,20 @@ model Invitation {
   createdAt DateTime @default(now())
   expiresAt DateTime @default(now()) // Add default value temporarily
 }
+
+model Property {
+  id             String   @id @default(uuid())
+  submittedBy    String
+  phone          String
+  email          String
+  title          String
+  description    String
+  propertyType   String
+  location       String
+  squareFeet     Int
+  purpose        String
+  priceOrRent    Int
+  imageUrl       String 
+  approved       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}

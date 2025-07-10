@@ -41,7 +41,7 @@ const SidebarNavbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/post" className="block px-4 py-2 bg-gray-800 text-white rounded">
+            <Link href="/sell" className="block px-4 py-2 bg-gray-800 text-white rounded">
               Sell/Rent Out
             </Link>
           </li>
@@ -52,7 +52,7 @@ const SidebarNavbar = () => {
       <div className="hidden lg:flex justify-around items-center px-4 py-2 bg-white shadow w-full">
         <Link href="/" className="px-4 py-2 bg-gray-800 text-white rounded">Home</Link>
         <Link href="/buy" className="px-4 py-2 bg-gray-800 text-white rounded">Buy/Rent</Link>
-        <Link href="/post" className="px-4 py-2 bg-gray-800 text-white rounded">Sell/Rent Out</Link>
+        <Link href="/sell" className="px-4 py-2 bg-gray-800 text-white rounded">Sell/Rent Out</Link>
       </div>
     </>
   );

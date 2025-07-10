@@ -1,35 +1,42 @@
+import { authOptions } from "@/lib/auth";
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
-
-const secret = process.env.NEXTAUTH_SECRET;
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret });
+  const res = NextResponse.next();
 
-  const pathname = req.nextUrl.pathname;
-  const protectedPaths = ["/auth/dashboard", "/auth/settings"];
+  // Apply secure headers
+  res.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self';");
+  res.headers.set("X-Frame-Options", "DENY");
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.headers.set("Permissions-Policy", "geolocation=(), microphone=()");
 
-  const isProtected = protectedPaths.some((path) =>
-    pathname.startsWith(path)
-  );
+  const { pathname } = req.nextUrl;
 
 
-  if (isProtected) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/login", req.url));
-    }
+  if (pathname.startsWith("/api/auth")) {
+    return res;
+  }
 
-    const userRole = token.role;
 
-    if (userRole !== "ADMIN" && userRole !== "SUPERADMIN") {
+  if (pathname.startsWith("/dashboard")) {
+    const token = await getToken({ req, secret: authOptions.secret });
+    const role = token?.role?.toLowerCase();
+
+    if (!role || !["admin", "superadmin"].includes(role)) {
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
   }
 
-  return NextResponse.next();
+  return res;
 }
 
 export const config = {
-  matcher: ["/auth/:path*"],
+  matcher: [
+    "/dashboard/:path*",      // protect frontend admin pages
+    "/((?!_next/static|_next/image|favicon.ico).*)", // apply headers everywhere else
+  ],
 };

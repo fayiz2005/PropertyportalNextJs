@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "target": "ES2017",
     "lib": [
       "dom",
@@ -33,7 +34,8 @@
     "**/*.tsx",
     "next-env.d.ts",
     "types/next-auth.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "prisma"
   ],
   "exclude": [
     "node_modules"

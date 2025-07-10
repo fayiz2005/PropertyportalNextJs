@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     if (!token) {
-      router.replace("/login"); // Redirect to login if no token
+      router.replace("/auth/login"); // Redirect to login if no token
     }
   }, [token, router]);
 
