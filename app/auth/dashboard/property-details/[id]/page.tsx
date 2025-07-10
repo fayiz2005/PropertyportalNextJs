@@ -7,7 +7,11 @@ import ToggleApprovalButton from "@/app/components/ToggleApprovalButton";
 
 
 
-const PropertyDetailsPage = async ({ params }: { params: { id: string } }) => {
+const PropertyDetailsPage = async ({
+  params,
+}: {
+  params: { id: string };
+}) => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
