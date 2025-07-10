@@ -1,5 +1,6 @@
 import SidebarNavbar from "./SidebarNavbar";
-import PropertyBanner from "./propertyBanner";
+import PropertyBanner from "./PropertyBanner";
+
 
 const Header = () => {
   return (
