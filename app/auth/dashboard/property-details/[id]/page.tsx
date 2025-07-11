@@ -5,17 +5,20 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import ToggleApprovalButton from "@/app/components/ToggleApprovalButton";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
+interface PropertyPageProps {
+  params: { id: string };
+}
 
-export default async function PropertyDetailsPage({ params }: Props) {
+
+export default async function PropertyDetailsPage(props: PropertyPageProps) {
+  const { id } = props.params; 
+
   const session = await getServerSession(authOptions);
 
+  
+
   if (!session) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   const user = await prisma.user.findUnique({
@@ -31,7 +34,7 @@ export default async function PropertyDetailsPage({ params }: Props) {
   }
 
   const property = await prisma.property.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!property) {

@@ -6,10 +6,10 @@ import { sensitiveActionLimiter } from "@/lib/rateLimiter";
 
 export async function POST(req: Request) {
 
-    // Get IP address (works behind proxies like Vercel)
+
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
 
-  // Consume a point for this IP, reject if limit exceeded
+
   try {
     await sensitiveActionLimiter.consume(ip);
   } catch {
@@ -20,16 +20,14 @@ export async function POST(req: Request) {
   }
 
   const { email } = await req.json();
-  console.log("[send-reset] Request received for email:", email);
 
   if (!email) {
-    console.log("[send-reset] No email provided");
     return NextResponse.json({ error: "Email is required" }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    console.log("[send-reset] Email not found:", email);
+
     return NextResponse.json({ message: "If this email exists, a reset link has been sent." });
   }
 
@@ -41,7 +39,6 @@ export async function POST(req: Request) {
   });
 
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password-page?token=${token}`;
-  console.log("[send-reset] Reset URL:", resetUrl);
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -82,7 +79,6 @@ export async function POST(req: Request) {
 
   });
 
-  console.log("[send-reset] Email sent to:", email);
 
   return NextResponse.json({ message: "Reset link sent if the email exists." });
 }

@@ -4,8 +4,9 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { AuthOptions, SessionStrategy } from "next-auth";
 
-export const authOptions = {
+export const authOptions: AuthOptions= {
   providers: [
     Credentials({
       credentials: {
@@ -21,7 +22,7 @@ export const authOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user) {
+        if (!user || !user.hashedPassword) {
           throw new Error("Invalid credentials");
         }
 
@@ -30,11 +31,11 @@ export const authOptions = {
           throw new Error("Invalid credentials");
         }
 
+
         if (!user.emailVerified) {
           throw new Error("Please verify your email before logging in.");
         }
 
-        console.log(" [authorize] user:", user);
 
         return {
           id: user.id,
@@ -59,18 +60,15 @@ export const authOptions = {
         token.role = user.role;
       }
 
-      console.log("[jwt] token:", token);
 
       return token;
     },
 
     async session({ session, token }) {
-      console.log(" [session] token:", token);
       if (session.user) {
         session.user.email = token.email as string;
         session.user.role = token.role as string;
       }
-      console.log(" [session] session:", session);
       return session;
     },
   },

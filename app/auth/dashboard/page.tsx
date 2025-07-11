@@ -9,7 +9,7 @@ import ToggleApprovalButton from "@/app/components/ToggleApprovalButton";
 const DashboardPage = async () => {
   const session = await getServerSession(authOptions);
 
-  if (!session) redirect("/login");
+  if (!session) redirect("/auth/login");
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email! },

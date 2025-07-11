@@ -55,18 +55,18 @@ export default function PropertySellForm() {
         })()
       : [];
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, files } = e.target;
-    if (name === "image") {
-      setFormData((prev) => ({ ...prev, image: files ? files[0] : null }));
-    } else if (name === "division") {
-      setFormData((prev) => ({ ...prev, division: value, district: "", thana: "" }));
-    } else if (name === "district") {
-      setFormData((prev) => ({ ...prev, district: value, thana: "" }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+const handleInputChange = (
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => {
+  const { name, value } = e.target;
+
+  if (name === "image" && e.target instanceof HTMLInputElement) {
+    const files = e.target.files;
+    setFormData((prev) => ({ ...prev, image: files ? files[0] : null }));
+  } else {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+};
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

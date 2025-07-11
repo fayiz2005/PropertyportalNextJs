@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
-interface PropertyPageProps {
+interface MyPropertyPageProps {
   params: { id: string };
 }
 
@@ -13,7 +13,7 @@ function formatIndianNumber(x: number) {
   return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
 }
 
-export default async function PropertyPage({ params }: PropertyPageProps) {
+export default async function PropertyPage({ params }: MyPropertyPageProps) {
   const property = await prisma.property.findUnique({
     where: { id: params.id },
   });
