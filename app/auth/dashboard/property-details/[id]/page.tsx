@@ -101,4 +101,4 @@ export default async function PropertyDetailsPage({ params }: Props) {
   );
 };
 
-export default PropertyDetailsPage;
+
