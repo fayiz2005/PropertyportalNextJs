@@ -5,13 +5,13 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import ToggleApprovalButton from "@/app/components/ToggleApprovalButton";
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
-
-const PropertyDetailsPage = async ({
-  params,
-}: {
-  params: { id: string };
-}) => {
+export default async function PropertyDetailsPage({ params }: Props) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
