@@ -4,8 +4,10 @@ import ResetPasswordClient from "./ResetPasswordClient";
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="text-center mt-10 mb-10">Loading...</div>}>
-      <ResetPasswordClient />
-    </Suspense>
+    <div className="mb-10">
+      <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <ResetPasswordClient />
+      </Suspense>
+    </div>
   );
 }
