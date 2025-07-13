@@ -38,7 +38,9 @@ export async function POST(req: Request) {
     data: { email, token, expires },
   });
 
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password-page?token=${token}`;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+const resetUrl = `${baseUrl}/auth/reset-password-page?token=${token}`;
+
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
