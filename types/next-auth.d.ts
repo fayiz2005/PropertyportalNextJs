@@ -9,6 +9,9 @@ declare module "next-auth" {
       role: string;
       emailVerified?: Date | null;
     };
+    
+
+    
   }
 
   interface User {

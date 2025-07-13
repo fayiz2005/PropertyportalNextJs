@@ -21,18 +21,18 @@ export default async function PropertyPage({ params }: MyPropertyPageProps) {
   if (!property || !property.approved) return notFound();
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="grid md:grid-cols-2 gap-8">
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <img
           src={property.imageUrl}
           alt={property.title}
-          className="w-full h-96 object-cover rounded-xl shadow"
+          className="w-full h-64 md:h-96 object-cover rounded-xl shadow"
         />
-        <div>
-          <h1 className="text-2xl font-bold mb-2">{property.title}</h1>
+        <div className="flex flex-col justify-center">
+          <h1 className="text-xl md:text-2xl font-bold mb-2">{property.title}</h1>
           <p className="text-gray-500 mb-4">{property.location}</p>
 
-          <div className="space-y-2">
+          <div className="space-y-2 text-sm md:text-base">
             <p>
               <strong>Type:</strong> {property.propertyType}
             </p>
@@ -43,9 +43,7 @@ export default async function PropertyPage({ params }: MyPropertyPageProps) {
               <strong>Size:</strong> {formatIndianNumber(property.squareFeet)} sqft
             </p>
             <p>
-              <strong>
-                {property.purpose === "rent" ? "Rent:" : "Price:"}
-              </strong>{" "}
+              <strong>{property.purpose === "rent" ? "Rent:" : "Price:"}</strong>{" "}
               ৳{formatIndianNumber(property.priceOrRent)}
               {property.purpose === "rent" && " /month"}
             </p>
@@ -55,7 +53,7 @@ export default async function PropertyPage({ params }: MyPropertyPageProps) {
             <p>
               <strong>Email:</strong> {property.email}
             </p>
-            <p className="mt-4">
+            <p className="mt-4 whitespace-pre-line">
               <strong>Description:</strong>
               <br />
               {property.description}
