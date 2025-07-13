@@ -19,11 +19,10 @@ async function generateUniqueToken(maxRetries = 5): Promise<string> {
 }
 
 
+
 export async function POST(req: Request) {
-  // Get IP address (works behind proxies like Vercel)
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
 
-  // Consume a point for this IP, reject if limit exceeded
   try {
     await sensitiveActionLimiter.consume(ip);
   } catch {
@@ -40,10 +39,21 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ message: "Invalid email." }), { status: 400 });
     }
 
-    const token = await generateUniqueToken();
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour expiry
+    // 🚫 Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-    // Upsert invite token in DB
+    if (existingUser) {
+      return new Response(
+        JSON.stringify({ message: "User with this email already exists." }),
+        { status: 400 }
+      );
+    }
+
+    const token = await generateUniqueToken();
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
     await prisma.invitation.upsert({
       where: { email },
       update: { token, used: false, expiresAt },
@@ -52,7 +62,6 @@ export async function POST(req: Request) {
 
     const link = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/set-password?token=${token}`;
 
-    // Setup mail transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -61,7 +70,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send invitation email
     await transporter.sendMail({
       from: `"Admin Panel" <${process.env.EMAIL_FROM}>`,
       to: email,
@@ -74,9 +82,13 @@ export async function POST(req: Request) {
       `,
     });
 
-    return new Response(JSON.stringify({ message: "Invite sent!" }), { status: 200 });
+    return new Response(
+      JSON.stringify({ message: "Invitation sent successfully." }),
+      { status: 200 }
+    );
+
   } catch (error) {
-    console.error("Send invite error:", error);
+    console.error("Invite Error:", error);
     return new Response(JSON.stringify({ message: "Failed to send invite." }), { status: 500 });
   }
 }
