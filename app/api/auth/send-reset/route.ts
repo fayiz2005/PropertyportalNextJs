@@ -38,6 +38,9 @@ export async function POST(req: Request) {
     data: { email, token, expires },
   });
 
+  
+console.log("RESET BASE URL:", process.env.NEXT_PUBLIC_BASE_URL);
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 const resetUrl = `${baseUrl}/auth/reset-password-page?token=${token}`;
 
