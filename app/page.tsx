@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
 
-      <main className="bg-white min-h-screen flex items-center justify-center px-4">
+      <main className="bg-white min-h-screen flex items-center justify-center px-4 mb-10 mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-6xl w-full">
           {/* Buy/Rent Button */}
           <Link
