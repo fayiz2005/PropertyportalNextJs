@@ -41,8 +41,8 @@ export async function POST(req: Request) {
 
 
 
-const baseUrl = process.env.BASE_URL
-const resetUrl = `${baseUrl}/auth/reset-password-page?token=${token}`;
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password-page?token=${token}`;
+
 
 
   const transporter = nodemailer.createTransport({
