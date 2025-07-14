@@ -31,9 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
       <Header/>
-        <main className="flex-grow">
+        <div className="pt-16 pb-16">
           {children}
-        </main>
+        </div>
       <Footer/>
       </body>
 

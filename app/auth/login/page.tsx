@@ -54,7 +54,7 @@ export default function LoginPage() {
         >
           Login
         </button>
-      
+
         <div className="text-right">
           <Link href="/auth/reset-password-request" className="text-sm text-blue-600 hover:underline">
             Forgot Password?
