@@ -4,7 +4,7 @@ import ResetPasswordClient from "./ResetPasswordClient";
 
 export default function ResetPasswordPage() {
   return (
-    <div className="mb-10">
+    <div className="py-10">
       <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
         <ResetPasswordClient />
       </Suspense>
