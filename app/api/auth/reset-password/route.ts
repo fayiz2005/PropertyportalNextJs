@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   }
 
   const { token, password } = await req.json();
-  console.log("[reset-password] Request received. Token:", token);
+
 
   if (!token || !password) {
     console.log("[reset-password] Missing token or password");
@@ -34,12 +34,10 @@ export async function POST(req: Request) {
   const resetRecord = await prisma.passwordResetToken.findUnique({ where: { token } });
 
   if (!resetRecord) {
-    console.log("[reset-password] Token not found in DB:", token);
     return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
   }
 
   if (resetRecord.expires < new Date()) {
-    console.log("[reset-password] Token expired:", token);
     return NextResponse.json({ error: "Token has expired" }, { status: 400 });
   }
 

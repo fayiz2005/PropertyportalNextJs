@@ -38,7 +38,7 @@ export default function ResetPasswordClient() {
     const data = await res.json();
 
     if (res.ok) {
-      router.push("/login");
+      router.push("/auth/login");
     } else {
       setError(data.error || "Something went wrong.");
     }
