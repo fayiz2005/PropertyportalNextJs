@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 mb-10">
+    <div className="max-w-md mx-auto pt-10 pb-10">
       <h1 className="text-2xl font-bold mb-4">Forgot Password</h1>
       {success ? (
         <p className="text-green-600">Check your email for a reset link.</p>
